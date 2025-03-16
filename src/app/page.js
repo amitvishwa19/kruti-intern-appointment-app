@@ -8,6 +8,7 @@ import { format, addMinutes, startOfDay } from 'date-fns';
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea";
 import { toast } from "sonner";
+import { db } from "@/lib/db";
 
 
 
@@ -95,8 +96,8 @@ export default function Home() {
     setData({ slot: '', name: '', description: '' })
   }
 
-  const handleEdit = () => {
-    toast.success('Edit appointment')
+  const handleEdit = (appointment) => {
+    toast.success('Edit appointment', appointment)
     setOpen(true)
   }
 
@@ -113,7 +114,7 @@ export default function Home() {
     setData({ slot: '', name: '', description: '' })
   }
 
-  const handleFomSubmit = () => {
+  const handleFomSubmit = async () => {
     //toast.success`Appointment created successfully`
     if (data.slot === '') return toast.error('Please select slot')
     if (data.name === '') return toast.error('Please enter name')
@@ -124,6 +125,14 @@ export default function Home() {
     if (slot.length > 0) return toast.error('Appointment already exist in this slot')
 
     console.log('slot', slot)
+
+    // const res = await db.appointment.create({
+    //   data: {
+    //     slot: data.slot,
+    //     name: data.name,
+    //     description: data.description
+    //   }
+    // })
 
     setAppointment([...appointment, data])
     setOpen(false)
@@ -212,7 +221,7 @@ export default function Home() {
                   <TableCell className='text-xl'>{appointment.description}</TableCell>
                   <TableCell className='text-xl'>
                     <div className="flex justify-center gap-2">
-                      <Button variant='outline' size='sm' className='text-slate-800' onClick={() => { handleEdit() }}>Edit</Button>
+                      <Button variant='outline' size='sm' className='text-slate-800' onClick={() => { handleEdit(appointment) }}>Edit</Button>
                       <Button variant='outline' size='sm' className='text-slate-800' onClick={() => { handleDelete(appointment.slot) }}>Delete</Button>
                     </div>
                   </TableCell>
